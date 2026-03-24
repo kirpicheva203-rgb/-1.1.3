@@ -1,6 +1,8 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
+import jm.task.core.jdbc.service.UserService;
+import jm.task.core.jdbc.service.UserServiceImpl;
 import jm.task.core.jdbc.util.Util;
 
 import java.math.BigDecimal;
@@ -13,96 +15,56 @@ public class UserDaoJDBCImpl implements UserDao {
 
     }
 
-    @Override
     public void createUsersTable() {
-        Connection connection = null;
-        try (Connection con = Util.getConnection()) {
-            con.setAutoCommit(false);
+        try (Connection connection = Util.getConnection()) {
             String sql = "CREATE TABLE IF NOT EXISTS users (id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(80), lastName VARCHAR(100), age INT)";
-            PreparedStatement statement = con.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
-            con.commit();
         } catch (SQLException e) {
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
             throw new RuntimeException(e);
         }
     }
 
-    @Override
     public void dropUsersTable() {
-        Connection connection = null;
-        try (Connection con = Util.getConnection()){
+        try (Connection connection = Util.getConnection()){
             String sql = "DROP TABLE IF EXISTS users";
-            PreparedStatement statement = con.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
         } catch (SQLException e) {
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
             throw new RuntimeException(e);
         }
     }
 
-    @Override
     public void saveUser(String name, String lastName, byte age) {
-        Connection connection = null;
-        try (Connection con = Util.getConnection()) {
+        try (Connection connection = Util.getConnection()) {
             String sql = "INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)";
-            PreparedStatement statement = con.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, name);
             statement.setString(2, lastName);
             statement.setInt(3, age);
             statement.executeUpdate();
             System.out.println("User с именем " + name + " добавлен в базу данных");
         } catch (SQLException e) {
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
             throw new RuntimeException(e);
         }
     }
 
-    @Override
     public void removeUserById(long id) {
-        Connection connection = null;
-        try (Connection con = Util.getConnection()) {
+        try (Connection connection = Util.getConnection()) {
             String sql = "DELETE FROM users WHERE id = ?";
-            PreparedStatement statement = con.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.setBigDecimal(1, BigDecimal.valueOf(id));
             statement.executeUpdate();
         } catch (SQLException e) {
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
             throw new RuntimeException(e);
         }
     }
 
-    @Override
     public List<User> getAllUsers() {
-        Connection connection = null;
         List <User> users = new ArrayList<>();
-        try (Connection con = Util.getConnection()){
+        try (Connection connection = Util.getConnection()){
             String sql = "SELECT * FROM users";
-            PreparedStatement statement = con.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while (rs.next()){
                 long id = (long) rs.getInt("id");
@@ -113,33 +75,17 @@ public class UserDaoJDBCImpl implements UserDao {
             }
 
         } catch (SQLException e) {
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
             throw new RuntimeException(e);
         }
         return users;
     }
 
-    @Override
     public void cleanUsersTable() {
-        Connection connection = null;
-        try (Connection con = Util.getConnection()){
+        try (Connection connection = Util.getConnection()){
             String sql = "TRUNCATE TABLE users";
-            PreparedStatement statement = con.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
         } catch (SQLException e) {
-            try {
-                if (connection != null) {
-                    connection.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
             throw new RuntimeException(e);
         }
     }
