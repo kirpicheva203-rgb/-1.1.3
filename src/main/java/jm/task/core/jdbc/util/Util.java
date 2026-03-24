@@ -24,10 +24,6 @@ public class Util {
     private static Connection connection = null;
     private static SessionFactory factory;
 
-    private Util() {
-        Util util = new Util();
-    }
-
     public static Connection getConnection() {
         try {
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
@@ -44,41 +40,5 @@ public class Util {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    public static SessionFactory getSessionFactory() {
-        if (factory == null) {
-            try {
-                Configuration configuration = new Configuration();
-                Properties settings = new Properties();
-
-                settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, URL);
-                settings.put(Environment.USER, USERNAME);
-                settings.put(Environment.PASS, PASSWORD);
-                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL8Dialect");
-
-                settings.put(Environment.SHOW_SQL, "true");
-              //  settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-                settings.put(Environment.HBM2DDL_AUTO, "none");
-
-                configuration.setProperties(settings);
-                configuration.addAnnotatedClass(User.class);
-
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties())
-                        .build();
-
-                factory = configuration.buildSessionFactory(serviceRegistry);
-            } catch (Exception e) {
-                System.err.println("Ошибка при создании SessionFactory:");
-                e.printStackTrace();
-            }
-        }
-        return factory;
-    }
-
-    public static void closeSessionFactory() {
-        if (factory != null) factory.close();
     }
 }
