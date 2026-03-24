@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package jm.task.core.jdbc.util;
 
 import com.mysql.cj.xdevapi.SessionFactory;
@@ -72,3 +73,85 @@ public class Util {
         if (factory != null) factory.clone();
     }
 }
+=======
+package jm.task.core.jdbc.util;
+
+import org.hibernate.SessionFactory;
+
+import org.hibernate.cfg.Configuration;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
+
+
+
+import jm.task.core.jdbc.model.User;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Environment;
+
+import org.hibernate.service.ServiceRegistry;
+
+public class Util {
+
+    private static final String URL = "jdbc:mysql://localhost:3306/mydb";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "Atw77kl924!";
+    private static Connection connection = null;
+    private static SessionFactory factory;
+
+    public static Connection getConnection() {
+        try {
+            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return connection;
+    }
+    public static void closeConnection() {
+        if (connection != null){
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static SessionFactory getSessionFactory() {
+        if (factory == null) {
+            try {
+                Configuration configuration = new Configuration();
+                Properties settings = new Properties();
+
+                settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
+                settings.put(Environment.URL, URL);
+                settings.put(Environment.USER, USERNAME);
+                settings.put(Environment.PASS, PASSWORD);
+                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL8Dialect");
+
+                settings.put(Environment.SHOW_SQL, "true");
+              //  settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+                settings.put(Environment.HBM2DDL_AUTO, "none");
+
+                configuration.setProperties(settings);
+                configuration.addAnnotatedClass(User.class);
+
+                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                        .applySettings(configuration.getProperties())
+                        .build();
+
+                factory = configuration.buildSessionFactory(serviceRegistry);
+            } catch (Exception e) {
+                System.err.println("Ошибка при создании SessionFactory:");
+                e.printStackTrace();
+            }
+        }
+        return factory;
+    }
+
+    public static void closeSessionFactory() {
+        if (factory != null) factory.close();
+    }
+}
+>>>>>>> 4d611f2 (Задача 1.1.4)
