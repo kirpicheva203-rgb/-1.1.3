@@ -1,20 +1,13 @@
 package jm.task.core.jdbc.util;
 
-import org.hibernate.SessionFactory;
+import com.mysql.cj.xdevapi.SessionFactory;
+import org.hibernate.cfg.Environment;
 
-import org.hibernate.cfg.Configuration;
+import java.lang.module.Configuration;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-
-
-
-import jm.task.core.jdbc.model.User;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Environment;
-
-import org.hibernate.service.ServiceRegistry;
 
 public class Util {
 
@@ -25,6 +18,7 @@ public class Util {
     private static SessionFactory factory;
 
     public static Connection getConnection() {
+        Connection connection = null;
         try {
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
         } catch (SQLException e) {
@@ -75,6 +69,6 @@ public class Util {
     }
 
     public static void closeSessionFactory() {
-        if (factory != null) factory.close();
+        if (factory != null) factory.clone();
     }
 }
