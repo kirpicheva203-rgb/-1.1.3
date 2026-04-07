@@ -24,6 +24,10 @@ public class Util {
     private static Connection connection = null;
     private static SessionFactory factory;
 
+    private Util() {
+        Util util = new Util();
+    }
+
     public static Connection getConnection() {
         try {
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
